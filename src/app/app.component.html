@@ -1,0 +1,26 @@
+<h1 class="main-title">{{ title.toUpperCase() }}</h1>
+<p></p>
+<div *ngFor="let month of monthList">
+  <div class="month-row">
+    <div class="month-name">{{ month[0].monthNaming }}</div>
+    <div *ngFor="let day of month">
+      <div (click)="cellClick()" class="day-cell" [ngClass]="{ weekend: day.isweekend  }">
+        {{ day.day  }}
+      </div>
+    </div>
+  </div>
+</div>
+<app-popout *ngIf="popoutView"></app-popout>
+<button (click)="increment()">Increment</button>
+
+<div>Current Count: {{ day$ | async }}</div>
+
+<button (click)="decrement()">Decrement</button>
+
+<button (click)="reset()">Reset Counter</button>
+
+
+
+
+
+<router-outlet ></router-outlet>

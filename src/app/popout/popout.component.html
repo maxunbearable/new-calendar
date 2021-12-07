@@ -1,0 +1,31 @@
+<div class="container" *ngIf="popoutView">
+  <h2>Request Absence</h2>
+
+ <div [formGroup]="timeSpan">
+    <mat-form-field appearance="fill">
+        <mat-label>Type of absence *</mat-label>
+        <mat-select class="typeOfAbsence" formControlName="typeOfAbsence">
+          <mat-option value="vacation">Vacation</mat-option>
+          <mat-option value="sickness">Sickness</mat-option>
+        </mat-select>
+      </mat-form-field>
+  <mat-form-field appearance="fill" >
+      <mat-label>Start date *</mat-label>
+      <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>End date *</mat-label>
+      <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+ </div>
+  <button (click)="cancelClick()">CANCEL</button>
+  <button (click)="requestClick()">+ REQUEST</button>
+  <p></p>
+  <button (click)="addAbsence()">addAbsence</button>
+
+
+</div>

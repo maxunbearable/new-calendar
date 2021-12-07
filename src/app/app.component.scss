@@ -1,0 +1,34 @@
+.month-row{
+ display: inline-flex;
+ justify-content: center;
+}
+
+.main-title{
+  text-align: center;
+}
+
+
+.day-cell{
+  padding: 10px;
+  background-color: lightgray;
+  border: 1px solid grey;
+  cursor: pointer;
+
+}
+
+.month-name{
+  text-align: center;
+  padding:10px;
+  font-size:22px;
+  width:70px;
+}
+
+.weekend{
+  background-color: aquamarine;
+}
+.vacation {
+  background-color: orange;
+}
+.sickness {
+  background-color:red ;
+}
