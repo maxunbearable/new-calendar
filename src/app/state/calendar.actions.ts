@@ -3,7 +3,7 @@ import { Absence } from '../calendar/calendar.model';
 
 export const addAbsence = createAction(
   'Add Absence',
-  props<{from: string, to: string, abcenseType: string }>()
+  props<{from: string, to: string, typeOfAbsence: string }>()
 );
 
 export const removeAbsence = createAction(

@@ -4,20 +4,16 @@
   <div class="month-row">
     <div class="month-name">{{ month[0].monthNaming }}</div>
     <div *ngFor="let day of month">
-      <div (click)="cellClick()" class="day-cell" [ngClass]="{ weekend: day.isweekend  }">
+      <div (click)="cellClick()" class="day-cell" [ngClass]="{ weekend: day.isweekend,vacation: vacationArr.includes(day.date),sickness: sicknessArr.includes(day.date)  }">
         {{ day.day  }}
       </div>
     </div>
   </div>
 </div>
+<button (click)="logStore()">LogStore</button>
+
 <app-popout *ngIf="popoutView"></app-popout>
-<button (click)="increment()">Increment</button>
 
-<div>Current Count: {{ day$ | async }}</div>
-
-<button (click)="decrement()">Decrement</button>
-
-<button (click)="reset()">Reset Counter</button>
 
 
 

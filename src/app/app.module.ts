@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { counterReducer } from './counter.reducer';
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -36,7 +36,7 @@ import {absenceReducer} from './state/calendar.reducer'
     MatNativeDateModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    StoreModule.forRoot({ day: counterReducer, absence: absenceReducer}),
+    StoreModule.forRoot({ absence: absenceReducer}),
 
 
     MatSelectModule,

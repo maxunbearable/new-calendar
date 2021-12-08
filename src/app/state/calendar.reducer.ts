@@ -11,5 +11,5 @@ export const initialState: any[] = [];
 
 export const absenceReducer = createReducer(
   initialState,
-  on(addAbsence, (state: any) => ({...state, from:state.from, to:state.to, typeOfAbsence:state.typeOfAbsence})
+  on(addAbsence, (state: any, payload: {from: string, to: string, typeOfAbsence: string }) => ([...state, payload])
 ));

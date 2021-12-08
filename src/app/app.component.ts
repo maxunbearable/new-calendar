@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import * as moment from 'moment';
 import { Store } from '@ngrx/store';
-import { increment, decrement, reset } from './counter.actions';
 import { Observable } from 'rxjs';
-import {addAbsence} from './state/calendar.actions';
+import {Observer} from 'rxjs';
+import { extendMoment } from 'moment-range';
+
+
+
 
 
 
@@ -13,32 +16,25 @@ import {addAbsence} from './state/calendar.actions';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  day$!: Observable<number>;
+  moment = extendMoment(moment);
 
-  constructor(private store: Store<{ day: number}>) {
-    this.day$ = store.select('day');
+  absenceList!: any[];
+  sicknessArr:any[] = [];
+  vacationArr:any[] = [];
 
+  constructor(private store: Store<{ absence:any }>) {
+    store.select('absence');
   }
 
 
-  increment() {
-    // TODO: Dispatch an increment action
-    this.store.dispatch(increment());
-  }
 
-  decrement() {
-    // TODO: Dispatch a decrement action
-    this.store.dispatch(decrement());
-  }
-
-  reset() {
-    // TODO: Dispatch a reset action
-    this.store.dispatch(reset());
-  }
 
   title = 'event-calendar 2021';
 
-  months = [1,2,3,4,5,6,7,8,9,10,11,12]
+  months = [1,2,3,4,5,6,7,8,9,10,11,12];
+
+  absenceFlag = 'false';
+
 
 
    getDaysArrayByMonth(month: number) {
@@ -71,6 +67,56 @@ cellClick(){
      return this.getDaysArrayByMonth(month);
 
    });
+
+   absenceType(){
+
+     for (let absence of this.absenceList){
+       if (absence.typeOfAbsence === 'vacation'){
+          let start = absence.from;
+          console.log('start',start)
+          let end = absence.to;
+          console.log('end',end)
+          console.log(start<end)
+          console.log('+1day',moment(start).add(1, 'days').format('L'))
+          while (start<= end) {
+            this.vacationArr.push( moment(start).format('L') )
+            start = moment(start).add(1, 'days').format('L');
+        }
+       }
+       if (absence.typeOfAbsence === 'sickness'){
+        let start = absence.from;
+        console.log('start',start)
+        let end = absence.to;
+        console.log('end',end)
+        console.log(start<end)
+        console.log('+1day',moment(start).add(1, 'days').format('L'))
+        while (start<= end) {
+          this.sicknessArr.push( moment(start).format('L') )
+          start = moment(start).add(1, 'days').format('L');
+      }
+     }
+     }
+   }
+
+
+   logStore(){
+     this.absenceType();
+     console.log(this.vacationArr)
+
+   }
+
+
+   ngOnInit(){
+      this.store.select('absence')
+      .subscribe(state => {
+        console.log(state)
+        this.absenceList = state
+      })
+   }
+
+
+
+
 
 
 

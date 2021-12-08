@@ -3,7 +3,6 @@ import {FormControl, FormGroup} from '@angular/forms';
 import * as moment from 'moment';
 import { interval, timer, fromEvent, Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { increment, decrement, reset } from '../counter.actions';
 import { addAbsence } from '../state/calendar.actions';
 
 
@@ -15,7 +14,7 @@ import { addAbsence } from '../state/calendar.actions';
   templateUrl: './popout.component.html',
   styleUrls: ['./popout.component.scss']
 })
-export class PopoutComponent implements OnInit {
+export class PopoutComponent {
   startValue:any = '';
   endValue:any = '';
   typeOfAbsenceValue:any = '';
@@ -26,23 +25,10 @@ export class PopoutComponent implements OnInit {
   endDate : new FormControl(''),
   typeOfAbsence: new FormControl('')
 
+
   })
-  adsenceList:any[] = [];
 
-
-  absenceList$: Observable<any[]>;
-
-  constructor(private store: Store<{ absence:any }>) {
-    this.absenceList$ = store.select('absence');
-  }
-
-  addAbsence() {
-    // TODO: Dispatch an increment action
-    this.store.dispatch(addAbsence({from:this.startValue,to:this.endValue,abcenseType:this.typeOfAbsenceValue }));
-    console.log(this.adsenceList)
-  }
-
-
+  constructor(private store: Store<{ absence:any }>) {}
 
   popoutView = true;
 
@@ -53,17 +39,12 @@ export class PopoutComponent implements OnInit {
     this.startValue = moment(this.timeSpan.value.startDate).format("L");
     this.endValue = moment(this.timeSpan.value.endDate).format("L");
     this.typeOfAbsenceValue = this.timeSpan.value.typeOfAbsence;
-    this.adsenceList.push({typeOfAbsence:this.typeOfAbsenceValue, from:this.startValue, to:this.endValue })
-    console.log(this.adsenceList)
-  }
 
-
-  ngOnInit(): void {
-/*
-    let interval$ = timer(3000, 1000);
-    interval$.subscribe(val => console.log("stream 1 => "+val));
-    const  click$ = fromEvent(document, 'click');
-    click$.subscribe(evt => console.log(evt)); */
+    this.store.dispatch(addAbsence({
+      from:this.startValue,
+      to:this.endValue,
+      typeOfAbsence:this.typeOfAbsenceValue
+    }));
 
   }
 
