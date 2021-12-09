@@ -9,26 +9,60 @@
 
 
 .day-cell{
-  padding: 10px;
-  background-color: lightgray;
-  border: 1px solid grey;
+  padding: 15px;
+  background: linear-gradient( lightgray,white);
+  border: 1px solid white;
   cursor: pointer;
+  font-size:17px;
+  color: black;
+  opacity:0.9;
 
 }
 
 .month-name{
   text-align: center;
   padding:10px;
-  font-size:22px;
+  font-size:26px;
   width:70px;
+  opacity:0.7;
+  background: linear-gradient(10deg, white, lightcyan);
 }
 
 .weekend{
-  background-color: aquamarine;
+  background:linear-gradient(10deg, lightgray, aquamarine);
 }
 .vacation {
-  background-color: orange;
+  background:linear-gradient(10deg, lightgray,yellow);
 }
 .sickness {
-  background-color:red ;
+  background:linear-gradient(10deg, lightgray, greenyellow) ;
+
 }
+
+.container{
+
+  width: 500px;
+  margin-top:10px;
+}
+::ng-deep .cdk-overlay-container{ z-index:2000; }
+
+.calendar-container{
+  margin: 0 auto;
+}
+h1{
+  margin: 20px 0 20px;
+  color: black;
+  font-size:40px;
+  opacity:0.7;
+}
+
+.modal-title{
+  text-align: center;
+}
+
+.modal-body{
+ display: flex;
+ justify-content: center;
+}
+
+

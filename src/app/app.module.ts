@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 
-import { PopoutComponent } from './popout/popout.component';
+/*import { PopoutComponent } from './popout/popout.component'; */
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
@@ -16,7 +16,8 @@ import {MatSelectModule} from '@angular/material/select';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
-import {absenceReducer} from './state/calendar.reducer'
+import {absenceReducer} from './state/calendar.reducer';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap'
 
 
 
@@ -25,7 +26,7 @@ import {absenceReducer} from './state/calendar.reducer'
 @NgModule({
   declarations: [
     AppComponent,
-    PopoutComponent
+
   ],
   imports: [
     BrowserModule,
@@ -44,7 +45,8 @@ import {absenceReducer} from './state/calendar.reducer'
 
 
 
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+        NgbModule
 
   ],
   providers: [],

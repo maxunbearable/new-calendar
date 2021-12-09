@@ -1,20 +1,101 @@
 <h1 class="main-title">{{ title.toUpperCase() }}</h1>
 <p></p>
-<div *ngFor="let month of monthList">
+<div class="calendar-container">
+<div  *ngFor="let month of monthList">
   <div class="month-row">
     <div class="month-name">{{ month[0].monthNaming }}</div>
     <div *ngFor="let day of month">
-      <div (click)="cellClick()" class="day-cell" [ngClass]="{ weekend: day.isweekend,vacation: vacationArr.includes(day.date),sickness: sicknessArr.includes(day.date)  }">
+      <div (click)="cellClick(day.date)" (click)="open(content)" class="day-cell" value='1' [ngClass]="{ weekend: day.isweekend,vacation: vacationArr.includes(day.date),sickness: sicknessArr.includes(day.date)  }">
         {{ day.day  }}
       </div>
     </div>
   </div>
 </div>
-<button (click)="logStore()">LogStore</button>
+</div>
+<!--
+<div class="container" *ngIf="popoutView">
+  <h2>Request Absence</h2>
 
-<app-popout *ngIf="popoutView"></app-popout>
+ <div [formGroup]="timeSpan">
+    <mat-form-field appearance="fill">
+        <mat-label>Type of absence *</mat-label>
+        <mat-select class="typeOfAbsence" formControlName="typeOfAbsence">
+          <mat-option value="vacation">Vacation</mat-option>
+          <mat-option value="sickness">Sickness</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <hr>
+  <mat-form-field appearance="fill" >
+      <mat-label>Start date *</mat-label>
+      <input  matInput [matDatepicker]="startPicker" formControlName="startDate">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>End date *</mat-label>
+      <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+ </div>
+  <button (click)="cancelClick()">CANCEL</button>
+  <button (click)="requestClick()">+ REQUEST</button>
+
+</div> -->
+
+<!--<app-popout *ngIf="popoutView"></app-popout> -->
 
 
+<ng-template #content let-modal>
+  <div class="modal-header">
+      <h2 class="modal-title"
+          id="modal-basic-title">
+          Request Absence
+      </h2>
+      <button type="button" class="close"
+              aria-label="Close" (click)=
+              "modal.dismiss('Cross click')">
+
+          <span aria-hidden="true">
+              ×
+          </span>
+      </button>
+  </div>
+  <div class="modal-body">
+      <div [formGroup]="timeSpan">
+          <mat-form-field appearance="fill">
+              <mat-label>Type of absence </mat-label>
+              <mat-select class="typeOfAbsence" formControlName="typeOfAbsence" required>
+                <mat-option value="vacation">Vacation</mat-option>
+                <mat-option value="sickness">Sickness</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <hr>
+        <mat-form-field appearance="fill" >
+            <mat-label>Start date </mat-label>
+            <input  matInput [matDatepicker]="startPicker" formControlName="startDate" [matDatepickerFilter]="dateFilter" required>
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>End date </mat-label>
+            <input [min]="timeSpan.value.startDate" matInput [matDatepicker]="endPicker" [matDatepickerFilter]="dateFilter" formControlName="endDate" required>
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+       </div>
+  </div>
+  <div class="modal-footer">
+      <button type="submit"
+          class="btn btn-outline-dark"
+          (click)="modal.close('Save click')"
+          (click)="requestClick()"
+          [disabled]="!timeSpan.valid"
+          >
+          Save
+      </button>
+  </div>
+</ng-template>
 
 
 
