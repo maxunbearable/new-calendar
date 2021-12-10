@@ -87,6 +87,14 @@
   </div>
   <div class="modal-footer">
       <button type="submit"
+      class="btn btn-outline-dark"
+      (click)="onRemoveClick()"
+      (click)="modal.close('Save click')"
+      [ngClass]="{hidden: !this.timeSpan.value.endDate && !this.timeSpan.value.typeOfAbsence}"
+      >
+      Remove
+      </button>
+      <button type="submit"
           class="btn btn-outline-dark"
           (click)="modal.close('Save click')"
           (click)="requestClick()"
@@ -94,8 +102,10 @@
           >
           Save
       </button>
+
   </div>
 </ng-template>
+
 
 
 

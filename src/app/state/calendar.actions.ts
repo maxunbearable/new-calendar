@@ -8,5 +8,9 @@ export const addAbsence = createAction(
 
 export const removeAbsence = createAction(
   'Remove Absence',
-  props<{ id: string }>()
+  props<{from: string }>()
+);
+
+export const viewAbsence = createAction(
+  'View Absence'
 );

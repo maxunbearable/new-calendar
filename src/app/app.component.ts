@@ -5,7 +5,11 @@ import { Observable } from 'rxjs';
 import { Observer } from 'rxjs';
 import { CalendarService } from './popout/calendar-service';
 import { FormControl, FormGroup } from '@angular/forms';
-import { addAbsence } from './state/calendar.actions';
+import {
+  addAbsence,
+  viewAbsence,
+  removeAbsence
+} from './state/calendar.actions';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -15,7 +19,6 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 })
 export class AppComponent {
   closeResult = '';
-  date = '1/1/1111';
 
   [x: string]: any;
   startValue: any = '';
@@ -32,6 +35,7 @@ export class AppComponent {
   absenceList!: any[];
   sicknessArr: any[] = [];
   vacationArr: any[] = [];
+
   popoutView = false;
 
   constructor(
@@ -46,7 +50,14 @@ export class AppComponent {
 
   months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
+  dateFilter = (date: any) => {
+    let day = moment(date).format('L');
 
+    return (
+      this.vacationArr.includes(day) !== true &&
+      this.sicknessArr.includes(day) !== true
+    );
+  };
 
   getDaysArrayByMonth(month: number) {
     const year = 2021;
@@ -73,12 +84,37 @@ export class AppComponent {
     return arrDays.reverse();
   }
 
-  cellClick(value: any) {
-    this.popoutView = true;
-    moment(value);
+  cellClick(value: string) {
     this.timeSpan.patchValue({
       startDate: new Date(value)
     });
+    for (let absence of this.absenceList) {
+      if (this.absenceList[0] && value <= absence.to && value >= absence.from) {
+        let startEvent = absence.from;
+        let endEvent = absence.to;
+        let typeEvent = absence.typeOfAbsence;
+        this.timeSpan.patchValue({
+          startDate: new Date(startEvent)
+        });
+        this.timeSpan.patchValue({
+          endDate: new Date(endEvent)
+        });
+        this.timeSpan.patchValue({
+          typeOfAbsence: typeEvent
+        });
+        break;
+      } else {
+
+        console.log(value)
+        console.log(this.timeSpan.value.startDate)
+        this.timeSpan.patchValue({
+          endDate: ''
+        });
+        this.timeSpan.patchValue({
+          typeOfAbsence: ''
+        });
+      }
+    }
   }
 
   public monthList = this.months.map((month: number) => {
@@ -111,9 +147,6 @@ export class AppComponent {
     }
   }
 
-  cancelClick() {
-    this.popoutView = false;
-  }
   requestClick() {
     this.startValue = moment(this.timeSpan.value.startDate).format('L');
     this.endValue = moment(this.timeSpan.value.endDate).format('L');
@@ -126,8 +159,8 @@ export class AppComponent {
         typeOfAbsence: this.typeOfAbsenceValue
       })
     );
+
     this.absenceType();
-    console.log(this.checkValid())
     this.timeSpan.patchValue({
       endDate: ''
     });
@@ -140,14 +173,6 @@ export class AppComponent {
     this.store.select('absence').subscribe(state => {
       this.absenceList = state;
     });
-  }
-
-  checkValid() {
-    this.timeSpan.value.startDate &
-    this.timeSpan.value.endDate &
-    this.timeSpan.value.typeOfAbsence
-      ? true
-      : false;
   }
 
   open(content: any) {
@@ -172,16 +197,46 @@ export class AppComponent {
       return `with: ${reason}`;
     }
   }
-
-  dateFilter(date:any){
+  onRemoveClick() {
     debugger
-    let day = moment(date).format('L')
-    if (this.vacationArr !== undefined && !this.vacationArr.includes(day) === false){
-      return true
+    if ((this, this.timeSpan.value.typeOfAbsence === 'vacation')) {
+      let start = moment(this.timeSpan.value.startDate).format('L');
+      let end = moment(this.timeSpan.value.endDate).format('L');
+      while (start <= end) {
+        this.vacationArr.splice(this.vacationArr.indexOf(start), 1);
+        start = moment(start)
+          .add(1, 'days')
+          .format('L');
+      }
+      console.log(this.vacationArr)
+    } else {
+      if ((this, this.timeSpan.value.typeOfAbsence === 'sickness')) {
+        let start = moment(this.timeSpan.value.startDate).format('L');
+        let end = moment(this.timeSpan.value.endDate).format('L');
+        while (start <= end) {
+          this.sicknessArr.splice(this.sicknessArr.indexOf(start), 1);
+          start = moment(start)
+            .add(1, 'days')
+            .format('L');
+        }
+      }
     }
-    else {
-      return false
-    }
+    console.log(this.vacationArr)
+    this.store.dispatch(
+      removeAbsence({
+        from: moment(this.timeSpan.value.startDate).format('L')
+      })
+    );
+    this.absenceType();
+    this.timeSpan.patchValue({
+      endDate: ''
+    });
+    this.timeSpan.patchValue({
+      typeOfAbsence: ''
+    });
+    this.timeSpan.patchValue({
+      startDate: ''
+    });
 
   }
 }
