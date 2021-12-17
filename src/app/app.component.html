@@ -1,16 +1,26 @@
 <h1 class="main-title">{{ title.toUpperCase() }}</h1>
 <p></p>
 <div class="calendar-container">
-<div  *ngFor="let month of monthList">
-  <div class="month-row">
-    <div class="month-name">{{ month[0].monthNaming }}</div>
-    <div *ngFor="let day of month">
-      <div (click)="cellClick(day.date)" (click)="open(content)" class="day-cell" value='1' [ngClass]="{ weekend: day.isweekend,vacation: vacationArr.includes(day.date),sickness: sicknessArr.includes(day.date)  }">
-        {{ day.day  }}
+  <div *ngFor="let month of monthList">
+    <div class="month-row">
+      <div class="month-name">{{ month[0].monthNaming }}</div>
+      <div *ngFor="let day of month">
+        <div
+          (click)="cellClick(day.date)"
+          (click)="open(content)"
+          class="day-cell"
+          value="1"
+          [ngClass]="{
+            weekend: day.isweekend,
+            vacation: vacationArr.includes(day.date),
+            sickness: sicknessArr.includes(day.date)
+          }"
+        >
+          {{ day.day }}
+        </div>
       </div>
     </div>
   </div>
-</div>
 </div>
 <!--
 <div class="container" *ngIf="popoutView">
@@ -45,69 +55,108 @@
 
 <!--<app-popout *ngIf="popoutView"></app-popout> -->
 
-
 <ng-template #content let-modal>
   <div class="modal-header">
-      <h2 class="modal-title"
-          id="modal-basic-title">
-          Request Absence
-      </h2>
-      <button type="button" class="close"
-              aria-label="Close" (click)=
-              "modal.dismiss('Cross click')">
-
-          <span aria-hidden="true">
-              ×
-          </span>
-      </button>
+    <h2 class="modal-title" id="modal-basic-title">
+      Request Absence
+    </h2>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">
+        ×
+      </span>
+    </button>
   </div>
   <div class="modal-body">
-      <div [formGroup]="timeSpan">
-          <mat-form-field appearance="fill">
-              <mat-label>Type of absence </mat-label>
-              <mat-select class="typeOfAbsence" formControlName="typeOfAbsence" required>
-                <mat-option value="vacation">Vacation</mat-option>
-                <mat-option value="sickness">Sickness</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <hr>
-        <mat-form-field appearance="fill" >
-            <mat-label>Start date </mat-label>
-            <input  matInput [matDatepicker]="startPicker" formControlName="startDate" [matDatepickerFilter]="dateFilter" required>
-            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-            <mat-datepicker #startPicker></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>End date </mat-label>
-            <input [min]="timeSpan.value.startDate" matInput [matDatepicker]="endPicker" [matDatepickerFilter]="dateFilter" formControlName="endDate" required>
-            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-            <mat-datepicker #endPicker></mat-datepicker>
-          </mat-form-field>
-       </div>
+    <div [formGroup]="timeSpan">
+      <mat-form-field appearance="fill">
+        <mat-label>Type of absence </mat-label>
+        <mat-select
+          class="typeOfAbsence"
+          formControlName="typeOfAbsence"
+          required
+        >
+          <mat-option value="vacation">Vacation</mat-option>
+          <mat-option value="sickness">Sickness</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <hr />
+      <mat-form-field appearance="fill">
+        <mat-label>Start date </mat-label>
+        <input
+          matInput
+          [matDatepicker]="startPicker"
+          formControlName="startDate"
+          [matDatepickerFilter]="dateFilter"
+          required
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="startPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>End date </mat-label>
+        <input
+          [min]="timeSpan.value.startDate"
+          matInput
+          [matDatepicker]="endPicker"
+          [matDatepickerFilter]="dateFilter"
+          formControlName="endDate"
+          required
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="endPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
   </div>
   <div class="modal-footer">
-      <button type="submit"
+    <button
+      type="submit"
+      class="btn btn-outline-dark"
+      (click)="onEditClick()"
+      (click)="modal.close('Save click')"
+      [ngClass]="{
+        hidden:
+          isNew === true
+      }"
+    >
+      Edit
+    </button>
+    <button
+      type="submit"
       class="btn btn-outline-dark"
       (click)="onRemoveClick()"
       (click)="modal.close('Save click')"
-      [ngClass]="{hidden: !this.timeSpan.value.endDate && !this.timeSpan.value.typeOfAbsence}"
-      >
+      [ngClass]="{
+        hidden:
+          isNew === true
+      }"
+    >
       Remove
-      </button>
-      <button type="submit"
-          class="btn btn-outline-dark"
-          (click)="modal.close('Save click')"
-          (click)="requestClick()"
-          [disabled]="!timeSpan.valid"
-          >
-          Save
-      </button>
-
+    </button>
+    <button
+      type="submit"
+      class="btn btn-outline-dark"
+      (click)="modal.close('Save click')"
+      (click)="requestClick()"
+      [disabled]="!timeSpan.valid"
+      [ngClass]="{
+        hidden:
+          isNew === false
+      }"
+    >
+      Create
+    </button>
   </div>
 </ng-template>
 
-
-
-
-
-<router-outlet ></router-outlet>
+<router-outlet></router-outlet>

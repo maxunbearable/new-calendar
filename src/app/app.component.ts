@@ -8,7 +8,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import {
   addAbsence,
   viewAbsence,
-  removeAbsence
+  removeAbsence,
+  editAbsence
 } from './state/calendar.actions';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
@@ -20,12 +21,6 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 export class AppComponent {
   closeResult = '';
 
-  [x: string]: any;
-  startValue: any = '';
-  endValue: any = '';
-  typeOfAbsenceValue: any = '';
-  numOfDaysFromStart: any = '';
-  numOfDaysToEnd: any = '';
   timeSpan = new FormGroup({
     startDate: new FormControl(''),
     endDate: new FormControl(''),
@@ -36,11 +31,10 @@ export class AppComponent {
   sicknessArr: any[] = [];
   vacationArr: any[] = [];
 
-  popoutView = false;
+  isNew = true;
 
   constructor(
     private store: Store<{ absence: any }>,
-    calendarService: CalendarService,
     private modalService: NgbModal
   ) {
     store.select('absence');
@@ -53,10 +47,14 @@ export class AppComponent {
   dateFilter = (date: any) => {
     let day = moment(date).format('L');
 
-    return (
-      this.vacationArr.includes(day) !== true &&
-      this.sicknessArr.includes(day) !== true
-    );
+    if (this.isNew) {
+      return (
+        this.vacationArr.includes(day) !== true &&
+        this.sicknessArr.includes(day) !== true
+      );
+    } else {
+      return true;
+    }
   };
 
   getDaysArrayByMonth(month: number) {
@@ -85,11 +83,13 @@ export class AppComponent {
   }
 
   cellClick(value: string) {
+    this.isNew = true;
     this.timeSpan.patchValue({
       startDate: new Date(value)
     });
     for (let absence of this.absenceList) {
       if (this.absenceList[0] && value <= absence.to && value >= absence.from) {
+        this.isNew = false;
         let startEvent = absence.from;
         let endEvent = absence.to;
         let typeEvent = absence.typeOfAbsence;
@@ -104,9 +104,6 @@ export class AppComponent {
         });
         break;
       } else {
-
-        console.log(value)
-        console.log(this.timeSpan.value.startDate)
         this.timeSpan.patchValue({
           endDate: ''
         });
@@ -121,7 +118,9 @@ export class AppComponent {
     return this.getDaysArrayByMonth(month);
   });
 
-  absenceType() {
+  creatingArrOfAbsenceType() {
+    this.sicknessArr = [];
+    this.vacationArr = [];
     for (let absence of this.absenceList) {
       if (absence.typeOfAbsence === 'vacation') {
         let start = absence.from;
@@ -148,19 +147,16 @@ export class AppComponent {
   }
 
   requestClick() {
-    this.startValue = moment(this.timeSpan.value.startDate).format('L');
-    this.endValue = moment(this.timeSpan.value.endDate).format('L');
-    this.typeOfAbsenceValue = this.timeSpan.value.typeOfAbsence;
-
     this.store.dispatch(
       addAbsence({
-        from: this.startValue,
-        to: this.endValue,
-        typeOfAbsence: this.typeOfAbsenceValue
+        from: moment(this.timeSpan.value.startDate).format('L'),
+        to: moment(this.timeSpan.value.endDate).format('L'),
+        typeOfAbsence: this.timeSpan.value.typeOfAbsence,
+        id: Math.floor(Math.random()*1000000000)
       })
     );
 
-    this.absenceType();
+    this.creatingArrOfAbsenceType();
     this.timeSpan.patchValue({
       endDate: ''
     });
@@ -197,8 +193,7 @@ export class AppComponent {
       return `with: ${reason}`;
     }
   }
-  onRemoveClick() {
-    debugger
+  removingCalendarArr() {
     if ((this, this.timeSpan.value.typeOfAbsence === 'vacation')) {
       let start = moment(this.timeSpan.value.startDate).format('L');
       let end = moment(this.timeSpan.value.endDate).format('L');
@@ -208,7 +203,6 @@ export class AppComponent {
           .add(1, 'days')
           .format('L');
       }
-      console.log(this.vacationArr)
     } else {
       if ((this, this.timeSpan.value.typeOfAbsence === 'sickness')) {
         let start = moment(this.timeSpan.value.startDate).format('L');
@@ -221,13 +215,15 @@ export class AppComponent {
         }
       }
     }
-    console.log(this.vacationArr)
+  }
+  onRemoveClick() {
+    this.removingCalendarArr();
     this.store.dispatch(
       removeAbsence({
         from: moment(this.timeSpan.value.startDate).format('L')
       })
     );
-    this.absenceType();
+    this.creatingArrOfAbsenceType();
     this.timeSpan.patchValue({
       endDate: ''
     });
@@ -237,6 +233,35 @@ export class AppComponent {
     this.timeSpan.patchValue({
       startDate: ''
     });
+  }
+  onEditClick() {
+    let pastStart = moment(this.timeSpan.value.startDate).format('L');
+    let pastEnd = moment(this.timeSpan.value.endDate).format('L');
+    let pastType = this.timeSpan.value.typeOfAbsence;
+    this.onRemoveClick();
+    this.store.dispatch(
+      addAbsence({
+        from: pastStart,
+        to: pastEnd,
+        typeOfAbsence: pastType
+      })
+    );
+    this.removingCalendarArr();
+    this.creatingArrOfAbsenceType();
+  }
+  onEditClick2(){
+    let pastStart = moment(this.timeSpan.value.startDate).format('L');
+    let pastEnd = moment(this.timeSpan.value.endDate).format('L');
+    let pastType = this.timeSpan.value.typeOfAbsence;
+        this.store.dispatch(
+      addAbsence({
+        from: pastStart,
+        to: pastEnd,
+        typeOfAbsence: pastType
+      })
+    );
+    this.removingCalendarArr();
+    this.creatingArrOfAbsenceType();
 
   }
 }
